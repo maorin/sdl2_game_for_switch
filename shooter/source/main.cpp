@@ -37,6 +37,10 @@ int main(int argc, char *argv[])
 
 	initSDL();
 
+	SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+    SDL_JoystickEventState(SDL_ENABLE);
+    SDL_JoystickOpen(0);
+
 	player.x = 100;
 	player.y = 100;
 
@@ -57,6 +61,27 @@ int main(int argc, char *argv[])
 		prepareScene();
 
 		doInput();
+
+		if (app.up)
+		{
+			player.y -= 4;
+		}
+
+		if (app.down)
+		{
+			player.y += 4;
+		}
+
+		if (app.left)
+		{
+			player.x -= 4;
+		}
+
+		if (app.right)
+		{
+			player.x += 4;
+		}
+
 
 		blit(player.texture, player.x, player.y);
 
