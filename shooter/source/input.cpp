@@ -8,63 +8,23 @@
 
 extern App app;
 
-static void doKeyUp(SDL_JoyButtonEvent *event)
+
+static void doJoyButtonUp(SDL_JoyButtonEvent *event)
 {
-	if (event->button == JOY_UP)
+	if (event->state == SDL_RELEASED && event->button < MAX_JOYSTICK_BUTTONS)
 	{
-		app.up = 0;
+		app.joystick[event->button] = 0;
 	}
-
-	if (event->button == JOY_DOWN)
-	{
-		app.down = 0;
-	}
-
-	if (event->button == JOY_LEFT)
-	{
-		app.left = 0;
-	}
-
-	if (event->button == JOY_RIGHT)
-	{
-		app.right = 0;
-	}
-	
-	if (event->button == JOY_A)
-	{
-		app.fire = 0;
-	}
-
 }
 
-static void doKeyDown(SDL_JoyButtonEvent *event)
+
+static void doJoyButtonDown(SDL_JoyButtonEvent *event)
 {
 
-	if (event->button == JOY_UP)
+	if (event->state == SDL_PRESSED && event->button < MAX_JOYSTICK_BUTTONS)
 	{
-		app.up = 1;
+		app.joystick[event->button] = 1;
 	}
-
-	if (event->button == JOY_DOWN)
-	{
-		app.down = 1;
-	}
-
-	if (event->button == JOY_LEFT)
-	{
-		app.left = 1;
-	}
-
-	if (event->button == JOY_RIGHT)
-	{
-		app.right = 1;
-	}
-
-	if (event->button == JOY_A)
-	{
-		app.fire = 1;
-	}
-
 
 }
 
@@ -81,11 +41,11 @@ void doInput(void)
 				break;
 			
 			case SDL_JOYBUTTONDOWN:
-				doKeyDown(&event.jbutton);
+				doJoyButtonDown(&event.jbutton);
 				break;
 
 			case SDL_JOYBUTTONUP:
-				doKeyUp(&event.jbutton);
+				doJoyButtonUp(&event.jbutton);
 				break;
 
 			default:

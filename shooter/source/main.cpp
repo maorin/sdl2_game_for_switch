@@ -5,11 +5,13 @@
 #include "init.h"
 #include "input.h"
 #include "main.h"
+#include "stage.h"
 
 
 App app;
-Entity player;
-Entity bullet;
+Stage stage;
+
+static void capFrameRate(long *then, float *remainder);
 
 
 
@@ -30,12 +32,15 @@ int main(int argc, char *argv[])
 	 * 资源文件在romfs:/data/下面
 	 * 需要释放romfs
 	*/
+
+	long  then;
+	float remainder;
+
 	romfsInit();
 	chdir("romfs:/");
 
 	memset(&app, 0, sizeof(App));
-	memset(&player, 0, sizeof(Entity));
-	memset(&bullet, 0, sizeof(Entity));
+
 
 
 	initSDL();
@@ -44,24 +49,16 @@ int main(int argc, char *argv[])
     SDL_JoystickEventState(SDL_ENABLE);
     SDL_JoystickOpen(0);
 
-	player.x = 100;
-	player.y = 100;
+	atexit(cleanup);
 
-	char playTexturePath[] = "romfs:/data/player.png";
-	player.texture = loadTexture(playTexturePath);
-
-	char bulletTexturePath[] = "romfs:/data/playerBullet.png";
-	bullet.texture = loadTexture(bulletTexturePath);
-	
+	initStage();
 
 	printf("C hello \n");
 	std::cout << "C++  hello" << std::endl;
 
-	//SDL_Surface *sdllogo = IMG_Load("romfs:/data/sdl.png");
-	//SDL_Surface *sdllogo = IMG_Load("data/sdl.png");
-	//std::cout << "sdllogo: " << sdllogo << std::endl;
+	then = SDL_GetTicks();
+	remainder = 0;
 
-	atexit(cleanup);
 
 	while (1)
 	{
@@ -69,50 +66,9 @@ int main(int argc, char *argv[])
 
 		doInput();
 
-		if (app.up)
-		{
-			player.y -= 4;
-		}
+		app.delegate.logic();
 
-		if (app.down)
-		{
-			player.y += 4;
-		}
-
-		if (app.left)
-		{
-			player.x -= 4;
-		}
-
-		if (app.right)
-		{
-			player.x += 4;
-		}
-
-		if (app.fire && bullet.health == 0)
-		{
-			bullet.x = player.x;
-			bullet.y = player.y;
-			bullet.dx = 16;
-			bullet.dy = 0;
-			bullet.health = 1;
-		}
-
-		bullet.x += bullet.dx;
-		bullet.y += bullet.dy;
-
-		if (bullet.x > SCREEN_WIDTH)
-		{
-			bullet.health = 0;
-		}
-
-		blit(player.texture, player.x, player.y);
-
-		if (bullet.health > 0)
-		{
-			blit(bullet.texture, bullet.x, bullet.y);
-		}
-
+		app.delegate.draw();
 
 		presentScene();
 
@@ -125,4 +81,28 @@ int main(int argc, char *argv[])
     	socketExit();
     #endif
     return 0;
+}
+
+static void capFrameRate(long *then, float *remainder)
+{
+	long wait, frameTime;
+
+	wait = 16 + *remainder;
+
+	*remainder -= (int)*remainder;
+
+	frameTime = SDL_GetTicks() - *then;
+
+	wait -= frameTime;
+
+	if (wait < 1)
+	{
+		wait = 1;
+	}
+
+	SDL_Delay(wait);
+
+	*remainder += 0.667;
+
+	*then = SDL_GetTicks();
 }
