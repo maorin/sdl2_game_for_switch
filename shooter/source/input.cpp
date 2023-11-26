@@ -30,6 +30,11 @@ static void doKeyUp(SDL_JoyButtonEvent *event)
 		app.right = 0;
 	}
 	
+	if (event->button == JOY_A)
+	{
+		app.fire = 0;
+	}
+
 }
 
 static void doKeyDown(SDL_JoyButtonEvent *event)
@@ -54,6 +59,12 @@ static void doKeyDown(SDL_JoyButtonEvent *event)
 	{
 		app.right = 1;
 	}
+
+	if (event->button == JOY_A)
+	{
+		app.fire = 1;
+	}
+
 
 }
 
