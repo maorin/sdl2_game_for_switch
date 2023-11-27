@@ -18,3 +18,11 @@
 #define PLAYER_BULLET_SPEED 20
 
 #define MAX_JOYSTICK_BUTTONS       350
+
+
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
+
+#define SIDE_PLAYER 0
+#define SIDE_ALIEN  1
