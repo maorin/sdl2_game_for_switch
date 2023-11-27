@@ -26,3 +26,7 @@
 
 #define SIDE_PLAYER 0
 #define SIDE_ALIEN  1
+
+#define FPS 60
+
+#define ALIEN_BULLET_SPEED    8

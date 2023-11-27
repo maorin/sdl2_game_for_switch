@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
 
 		presentScene();
 
-		SDL_Delay(16);
+		capFrameRate(&then, &remainder);
 	}
 
 	romfsExit();

@@ -46,6 +46,9 @@ void initSDL(void)
 
 void cleanup(void)
 {
+
+	IMG_Quit();
+	
 	SDL_DestroyRenderer(app.renderer);
 
 	SDL_DestroyWindow(app.window);
