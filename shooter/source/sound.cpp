@@ -57,4 +57,7 @@ static void loadSounds(void)
 
 	char sdd_alien_die[] = "romfs:/data/sound/10 Guage Shotgun-SoundBible.com-74120584.ogg";
 	sounds[SND_ALIEN_DIE] = Mix_LoadWAV(sdd_alien_die);
+
+	char sdd_points[] = "romfs:/data/sound/342749__rhodesmas__notification-01.ogg";
+	sounds[SND_POINTS] = Mix_LoadWAV(sdd_points);
 }
