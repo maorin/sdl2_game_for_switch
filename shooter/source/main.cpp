@@ -5,6 +5,7 @@
 #include "init.h"
 #include "input.h"
 #include "main.h"
+#include "sound.h"
 #include "stage.h"
 
 
@@ -50,6 +51,8 @@ int main(int argc, char *argv[])
     SDL_JoystickOpen(0);
 
 	atexit(cleanup);
+
+	initSounds();
 
 	initStage();
 

@@ -1,12 +1,12 @@
-/*
- * Copyright (C) 2015-2018,2022 Parallel Realities. All rights reserved.
- */
-
 #include "common.h"
 
 #include "draw.h"
-#include "stage.h"
+#include "init.h"
+#include "input.h"
 #include "util.h"
+#include "main.h"
+#include "sound.h"
+#include "stage.h"
 
 extern App   app;
 extern Stage stage;
@@ -254,6 +254,8 @@ static void doPlayer(void)
 
 		if (app.joystick[JOY_A] && player->reload == 0)
 		{
+			playSound(SND_PLAYER_FIRE, CH_PLAYER);
+
 			fireBullet();
 		}
 
@@ -292,6 +294,7 @@ static void doEnemies(void)
 		if (e != player && player != NULL && --e->reload <= 0)
 		{
 			fireAlienBullet(e);
+			playSound(SND_ALIEN_FIRE, CH_ALIEN_FIRE);
 		}
 	}
 }
@@ -365,6 +368,15 @@ static int bulletHitFighter(Entity *b)
 			addExplosions(e->x, e->y, 32);
 
 			addDebris(e);
+
+			if (e == player)
+			{
+				playSound(SND_PLAYER_DIE, CH_PLAYER);
+			}
+			else
+			{
+				playSound(SND_ALIEN_DIE, CH_ANY);
+			}
 
 			return 1;
 		}
