@@ -7,6 +7,7 @@
 #include "main.h"
 #include "sound.h"
 #include "stage.h"
+#include "text.h"
 
 
 App app;
@@ -53,6 +54,8 @@ int main(int argc, char *argv[])
 	atexit(cleanup);
 
 	initSounds();
+
+	initFonts();
 
 	initStage();
 

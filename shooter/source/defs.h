@@ -50,3 +50,5 @@ enum
 	SND_ALIEN_DIE,
 	SND_MAX
 };
+
+#define MAX_LINE_LENGTH 1024
