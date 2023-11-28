@@ -39,7 +39,39 @@ void doInput(void)
 			case SDL_QUIT:
 				exit(0);
 				break;
-			
+
+			case SDL_JOYAXISMOTION:
+				if (event.jaxis.axis == 0) // X轴
+				{
+					if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
+					{
+						// 执行向左操作
+						app.joystick[JOY_LEFT] = 1;
+						app.joystick[JOY_RIGHT] = 0;
+					}
+					else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
+					{
+						// 执行向右操作
+						app.joystick[JOY_LEFT] = 0;
+						app.joystick[JOY_RIGHT] = 1;
+					}
+				}
+				else if (event.jaxis.axis == 1) // Y轴
+				{
+					if (event.jaxis.value < -JOYSTICK_DEAD_ZONE)
+					{
+						// 执行向上操作
+						app.joystick[JOY_UP] = 1;
+						app.joystick[JOY_DOWN] = 0;
+					}
+					else if (event.jaxis.value > JOYSTICK_DEAD_ZONE)
+					{
+						// 执行向下操作
+						app.joystick[JOY_UP] = 0;
+						app.joystick[JOY_DOWN] = 1;
+					}
+				}
+
 			case SDL_JOYBUTTONDOWN:
 				doJoyButtonDown(&event.jbutton);
 				break;

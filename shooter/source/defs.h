@@ -10,6 +10,13 @@
 #define JOY_RIGHT 14
 #define JOY_DOWN  15
 
+#define JOY_LEFT_STICK_X  16
+#define JOY_LEFT_STICK_Y  17
+#define JOY_RIGHT_STICK_X 18
+#define JOY_RIGHT_STICK_Y 19
+
+#define JOYSTICK_DEAD_ZONE 8000
+
 
 #define SCREEN_WIDTH  1280
 #define SCREEN_HEIGHT 720
