@@ -22,7 +22,7 @@ void initSounds(void)
 	loadSounds();
 }
 
-void loadMusic(char *filename)
+void loadMusic(const char *filename)
 {
 	if (music != NULL)
 	{

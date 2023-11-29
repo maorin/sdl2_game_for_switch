@@ -5,6 +5,7 @@
 #include "stage.h"
 #include "text.h"
 #include "util.h"
+#include "highscores.h"
 
 extern App   app;
 extern Stage stage;
@@ -216,7 +217,9 @@ static void logic(void)
 
 	if (player == NULL && --stageResetTimer <= 0)
 	{
-		resetStage();
+		addHighscore(stage.score);
+
+		initHighscores();
 	}
 }
 
@@ -729,15 +732,15 @@ static void addPointsPod(int x, int y)
 
 static void drawHud(void)
 {
-	drawText(10, 10, 255, 255, 255, "SCORE: %03d", stage.score);
+	drawText(10, 10, 255, 255, 255, TEXT_LEFT, "SCORE: %03d", stage.score);
 
 	if (stage.score > 0 && stage.score == highscore)
 	{
-		drawText(960, 10, 0, 255, 0, "HIGH SCORE: %03d", highscore);
+		drawText(960, 10, 0, 255, 0, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
 	}
 	else
 	{
-		drawText(960, 10, 255, 255, 255, "HIGH SCORE: %03d", highscore);
+		drawText(960, 10, 255, 255, 255, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
 	}
 }
 

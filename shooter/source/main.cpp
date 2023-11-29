@@ -8,9 +8,11 @@
 #include "sound.h"
 #include "stage.h"
 #include "text.h"
+#include "highscores.h"
 
 
 App app;
+Highscores highscores;
 Stage stage;
 
 static void capFrameRate(long *then, float *remainder);
@@ -53,11 +55,9 @@ int main(int argc, char *argv[])
 
 	atexit(cleanup);
 
-	initSounds();
+	initGame();
 
-	initFonts();
-
-	initStage();
+	initHighscores();
 
 	printf("C hello \n");
 	std::cout << "C++  hello" << std::endl;

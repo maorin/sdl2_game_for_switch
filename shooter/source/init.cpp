@@ -1,10 +1,14 @@
-/*
- * Copyright (C) 2015-2018,2022 Parallel Realities. All rights reserved.
- */
+
+#include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 
 #include "common.h"
 
+#include "background.h"
+#include "highscores.h"
 #include "init.h"
+#include "sound.h"
+#include "text.h"
 
 extern App app;
 
@@ -62,4 +66,21 @@ void cleanup(void)
 	SDL_DestroyWindow(app.window);
 
 	SDL_Quit();
+}
+
+void initGame(void)
+{
+	initBackground();
+
+	initStarfield();
+
+	initSounds();
+
+	initFonts();
+
+	initHighscoreTable();
+
+	loadMusic("music/Mercury.ogg");
+
+	playMusic(1);
 }

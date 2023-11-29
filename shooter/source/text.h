@@ -3,4 +3,4 @@
  */
 
 void initFonts(void);
-void drawText(int x, int y, int r, int g, int b, const char *format, ...);
+void drawText(int x, int y, int r, int g, int b, int align, const char *format, ...);

@@ -25,11 +25,14 @@
 #define PLAYER_BULLET_SPEED 20
 
 #define MAX_JOYSTICK_BUTTONS       350
+#define MAX_KEYBOARD_KEYS 350
 
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
+#define STRNCPY(dest, src, n) \
+	strncpy(dest, src, n);    \
+	dest[n - 1] = '\0'
 
 #define SIDE_PLAYER 0
 #define SIDE_ALIEN  1
@@ -41,6 +44,9 @@
 #define MAX_STARS   500
 
 #define MAX_SND_CHANNELS 8
+
+#define GLYPH_HEIGHT 28
+#define GLYPH_WIDTH  18
 
 enum
 {
@@ -60,5 +66,16 @@ enum
 	SND_MAX
 };
 
+enum
+{
+	TEXT_LEFT,
+	TEXT_CENTER,
+	TEXT_RIGHT
+};
 
-#define MAX_LINE_LENGTH 1024
+
+#define MAX_SCORE_NAME_LENGTH 16
+#define MAX_NAME_LENGTH       32
+#define MAX_LINE_LENGTH       1024
+
+#define NUM_HIGHSCORES 8
