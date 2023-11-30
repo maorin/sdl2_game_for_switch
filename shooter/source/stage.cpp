@@ -1,5 +1,6 @@
 #include "common.h"
 
+#include "background.h"
 #include "draw.h"
 #include "sound.h"
 #include "stage.h"
@@ -8,6 +9,7 @@
 #include "highscores.h"
 
 extern App   app;
+extern Highscores highscores;
 extern Stage stage;
 
 static void logic(void);
@@ -25,11 +27,6 @@ static void doEnemies(void);
 static void fireAlienBullet(Entity *e);
 static void clipPlayer(void);
 static void resetStage(void);
-static void drawBackground(void);
-static void initStarfield(void);
-static void drawStarfield(void);
-static void doBackground(void);
-static void doStarfield(void);
 static void drawExplosions(void);
 static void doExplosions(void);
 static void addExplosions(int x, int y, int num);
@@ -46,14 +43,10 @@ static SDL_Texture *bulletTexture;
 static SDL_Texture *enemyTexture;
 static SDL_Texture *alienBulletTexture;
 static SDL_Texture *playerTexture;
-static SDL_Texture *background;
 static SDL_Texture *explosionTexture;
 static SDL_Texture *pointsTexture;
 static int          enemySpawnTimer;
 static int          stageResetTimer;
-static int          backgroundX;
-static Star         stars[MAX_STARS];
-static int          highscore;
 
 void initStage(void)
 {
@@ -65,8 +58,9 @@ void initStage(void)
 	stage.bulletTail = &stage.bulletHead;
 	stage.explosionTail = &stage.explosionHead;
 	stage.debrisTail = &stage.debrisHead;
+	stage.pointsTail = &stage.pointsHead;
 
-	initPlayer();
+
 
 	char bulletTexturePath[] = "romfs:/data/playerBullet.png";
 	bulletTexture = loadTexture(bulletTexturePath);
@@ -81,8 +75,6 @@ void initStage(void)
 	char playerTexturePath[] = "romfs:/data/player.png";
 	playerTexture = loadTexture(playerTexturePath);
 
-	char backgroundTexturePath[] = "romfs:/data/background.png";
-	background = loadTexture(backgroundTexturePath);
 
 	char explosionTexturePath[] = "romfs:/data/explosion.png";
 	explosionTexture = loadTexture(explosionTexturePath);
@@ -91,12 +83,22 @@ void initStage(void)
 	pointsTexture = loadTexture(pointsTexturePath);
 
 
-	char musicPath[] = "romfs:/data/music/Mercury.ogg";
-	loadMusic(musicPath);
+	//char musicPath[] = "romfs:/data/music/Mercury.ogg";
+	//loadMusic(musicPath);
 
-	playMusic(1);
+	//playMusic(1);
+
+	memset(app.keyboard, 0, sizeof(int) * MAX_KEYBOARD_KEYS);
 
 	resetStage();
+
+	stage.score = 0;
+
+	initPlayer();
+
+	enemySpawnTimer = 0;
+
+	stageResetTimer = FPS * 3;
 }
 
 static void resetStage(void)
@@ -142,36 +144,15 @@ static void resetStage(void)
 	}
 
 
-	memset(&stage, 0, sizeof(Stage));
 	stage.fighterTail = &stage.fighterHead;
 	stage.bulletTail = &stage.bulletHead;
 	stage.explosionTail = &stage.explosionHead;
 	stage.debrisTail = &stage.debrisHead;
 	stage.pointsTail = &stage.pointsHead;
 
-	stage.score = 0;
 
-	initPlayer();
-	
-	initStarfield();
-
-
-	enemySpawnTimer = 0;
-
-	stageResetTimer = FPS * 3;
 }
 
-static void initStarfield(void)
-{
-	int i;
-
-	for (i = 0; i < MAX_STARS; i++)
-	{
-		stars[i].x = rand() % SCREEN_WIDTH;
-		stars[i].y = rand() % SCREEN_HEIGHT;
-		stars[i].speed = 1 + rand() % 8;
-	}
-}
 
 
 static void initPlayer()
@@ -223,28 +204,6 @@ static void logic(void)
 	}
 }
 
-static void doBackground(void)
-{
-	if (--backgroundX < -SCREEN_WIDTH)
-	{
-		backgroundX = 0;
-	}
-}
-
-static void doStarfield(void)
-{
-	int i;
-
-	for (i = 0; i < MAX_STARS; i++)
-	{
-		stars[i].x -= stars[i].speed;
-
-		if (stars[i].x < 0)
-		{
-			stars[i].x = SCREEN_WIDTH + stars[i].x;
-		}
-	}
-}
 
 
 static void doPlayer(void)
@@ -307,9 +266,11 @@ static void fireBullet(void)
 
 	bullet->y += (player->h / 2) - (bullet->h / 2);
 
+	bullet->side = SIDE_PLAYER;
+
 	player->reload = 8;
 
-	bullet->side = SIDE_PLAYER;
+	
 }
 
 static void doEnemies(void)
@@ -353,6 +314,42 @@ static void fireAlienBullet(Entity *e)
 	e->reload = (rand() % FPS * 2);
 }
 
+static void doFighters(void)
+{
+	Entity *e, *prev;
+
+	prev = &stage.fighterHead;
+
+	for (e = stage.fighterHead.next; e != NULL; e = e->next)
+	{
+		e->x += e->dx;
+		e->y += e->dy;
+
+		if (e != player && e->x < -e->w)
+		{
+			e->health = 0;
+		}
+
+		if (e->health == 0)
+		{
+			if (e == player)
+			{
+				player = NULL;
+			}
+
+			if (e == stage.fighterTail)
+			{
+				stage.fighterTail = prev;
+			}
+
+			prev->next = e->next;
+			free(e);
+			e = prev;
+		}
+
+		prev = e;
+	}
+}
 
 static void doBullets(void)
 {
@@ -417,42 +414,7 @@ static int bulletHitFighter(Entity *b)
 	return 0;
 }
 
-static void doFighters(void)
-{
-	Entity *e, *prev;
 
-	prev = &stage.fighterHead;
-
-	for (e = stage.fighterHead.next; e != NULL; e = e->next)
-	{
-		e->x += e->dx;
-		e->y += e->dy;
-
-		if (e != player && e->x < -e->w)
-		{
-			e->health = 0;
-		}
-
-		if (e->health == 0)
-		{
-			if (e == player)
-			{
-				player = NULL;
-			}
-
-			if (e == stage.fighterTail)
-			{
-				stage.fighterTail = prev;
-			}
-
-			prev->next = e->next;
-			free(e);
-			e = prev;
-		}
-
-		prev = e;
-	}
-}
 
 static void spawnEnemies(void)
 {
@@ -496,9 +458,9 @@ static void clipPlayer(void)
 			player->y = 0;
 		}
 
-		if (player->x > SCREEN_WIDTH / 2)
+		if (player->x > SCREEN_WIDTH - player->w)
 		{
-			player->x = SCREEN_WIDTH / 2;
+			player->x = SCREEN_WIDTH - player->w;
 		}
 
 		if (player->y > SCREEN_HEIGHT - player->h)
@@ -605,7 +567,7 @@ static void doPointsPods(void)
 
 			stage.score++;
 
-			highscore = MAX(stage.score, highscore);
+			//highscore = MAX(stage.score, highscore);
 
 			playSound(SND_POINTS, CH_POINTS);
 		}
@@ -730,21 +692,6 @@ static void addPointsPod(int x, int y)
 }
 
 
-static void drawHud(void)
-{
-	drawText(10, 10, 255, 255, 255, TEXT_LEFT, "SCORE: %03d", stage.score);
-
-	if (stage.score > 0 && stage.score == highscore)
-	{
-		drawText(960, 10, 0, 255, 0, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
-	}
-	else
-	{
-		drawText(960, 10, 255, 255, 255, TEXT_RIGHT, "HIGH SCORE: %03d", highscore);
-	}
-}
-
-
 static void draw(void)
 {
 	drawBackground();
@@ -794,36 +741,6 @@ static void drawBullets(void)
 	}
 }
 
-static void drawStarfield(void)
-{
-	int i, c;
-
-	for (i = 0; i < MAX_STARS; i++)
-	{
-		c = 32 * stars[i].speed;
-
-		SDL_SetRenderDrawColor(app.renderer, c, c, c, 255);
-
-		SDL_RenderDrawLine(app.renderer, stars[i].x, stars[i].y, stars[i].x + 3, stars[i].y);
-	}
-}
-
-static void drawBackground(void)
-{
-	SDL_Rect dest;
-	int      x;
-
-	for (x = backgroundX; x < SCREEN_WIDTH; x += SCREEN_WIDTH)
-	{
-		dest.x = x;
-		dest.y = 0;
-		dest.w = SCREEN_WIDTH;
-		dest.h = SCREEN_HEIGHT;
-
-		SDL_RenderCopy(app.renderer, background, NULL, &dest);
-	}
-}
-
 
 static void drawDebris(void)
 {
@@ -851,4 +768,18 @@ static void drawExplosions(void)
 	}
 
 	SDL_SetRenderDrawBlendMode(app.renderer, SDL_BLENDMODE_NONE);
+}
+
+static void drawHud(void)
+{
+	drawText(10, 10, 255, 255, 255, TEXT_LEFT, "SCORE: %03d", stage.score);
+
+	if (stage.score < highscores.highscore[0].score)
+	{
+		drawText(SCREEN_WIDTH - 10, 10, 255, 255, 255, TEXT_RIGHT, "HIGHSCORE: %03d", highscores.highscore[0].score);
+	}
+	else
+	{
+		drawText(SCREEN_WIDTH - 10, 10, 0, 255, 0, TEXT_RIGHT, "HIGHSCORE: %03d", stage.score);
+	}
 }

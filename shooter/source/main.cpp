@@ -1,14 +1,10 @@
 #include "common.h"
 
-
 #include "draw.h"
+#include "highscores.h"
 #include "init.h"
 #include "input.h"
 #include "main.h"
-#include "sound.h"
-#include "stage.h"
-#include "text.h"
-#include "highscores.h"
 
 
 App app;
@@ -31,6 +27,8 @@ int main(int argc, char *argv[])
 		nxlinkStdio();
 	#endif
 
+	printf("debug start... \n");
+
 	/**
 	 * 这个地方是SDL2的初始化 在switch上不一样的地方 需要初始化这个romfs
 	 * 资源文件在romfs:/data/下面
@@ -44,8 +42,7 @@ int main(int argc, char *argv[])
 	chdir("romfs:/");
 
 	memset(&app, 0, sizeof(App));
-
-
+	app.textureTail = &app.textureHead;
 
 	initSDL();
 
@@ -54,6 +51,8 @@ int main(int argc, char *argv[])
     SDL_JoystickOpen(0);
 
 	atexit(cleanup);
+
+	printf("initGame start... \n");
 
 	initGame();
 

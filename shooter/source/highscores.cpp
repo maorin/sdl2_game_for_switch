@@ -60,7 +60,8 @@ static void logic(void)
 	}
 	else
 	{
-		if (app.keyboard[SDL_SCANCODE_LCTRL])
+		//if (app.keyboard[SDL_SCANCODE_LCTRL])
+		if (app.joystick[JOY_A])
 		{
 			initStage();
 		}

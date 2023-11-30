@@ -1,7 +1,4 @@
 
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_mixer.h>
-
 #include "common.h"
 
 #include "background.h"
@@ -80,7 +77,7 @@ void initGame(void)
 
 	initHighscoreTable();
 
-	loadMusic("music/Mercury.ogg");
+	loadMusic("romfs:/data/music/Mercury.ogg");
 
 	playMusic(1);
 }

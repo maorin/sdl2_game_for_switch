@@ -2,6 +2,9 @@
  * Copyright (C) 2021-2022 Parallel Realities. All rights reserved.
  */
 
+#include <SDL2/SDL_mixer.h>
+
+
 #include "common.h"
 
 #include "background.h"
@@ -15,14 +18,20 @@ static SDL_Texture *background;
 
 void initBackground(void)
 {
-	char sdd_background_png[] = "romfs:/data/background.png";
-	background = loadTexture(sdd_background_png);
+	printf("initBackground start... \n");
+	char backgroundTexturePath[] = "romfs:/data/background.png";
+	background = loadTexture(backgroundTexturePath);
+
+	printf("initBackground end1... \n");
 
 	backgroundX = 0;
+
+	printf("initBackground end... \n");
 }
 
 void initStarfield(void)
 {
+	printf("initStarfield start... \n");
 	int i;
 
 	for (i = 0; i < MAX_STARS; i++)
@@ -31,6 +40,7 @@ void initStarfield(void)
 		stars[i].y = rand() % SCREEN_HEIGHT;
 		stars[i].speed = 1 + rand() % 8;
 	}
+	
 }
 
 void doBackground(void)
