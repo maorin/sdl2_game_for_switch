@@ -5,6 +5,7 @@
 #include "init.h"
 #include "input.h"
 #include "main.h"
+#include "title.h"
 
 
 App app;
@@ -56,7 +57,7 @@ int main(int argc, char *argv[])
 
 	initGame();
 
-	initHighscores();
+	initTitle();
 
 	printf("C hello \n");
 	std::cout << "C++  hello" << std::endl;
