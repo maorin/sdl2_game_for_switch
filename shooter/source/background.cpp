@@ -19,7 +19,8 @@ static SDL_Texture *background;
 void initBackground(void)
 {
 	printf("initBackground start... \n");
-	char backgroundTexturePath[] = "romfs:/data/background.png";
+	//char backgroundTexturePath[] = "romfs:/data/background.png";
+	char backgroundTexturePath[] = "romfs:/data/back.png";
 	background = loadTexture(backgroundTexturePath);
 
 	printf("initBackground end1... \n");

@@ -57,6 +57,12 @@ void doInput(void)
 						app.joystick[JOY_LEFT] = 0;
 						app.joystick[JOY_RIGHT] = 1;
 					}
+					else
+					{
+						// 回中操作
+						app.joystick[JOY_LEFT] = 0;
+						app.joystick[JOY_RIGHT] = 0;
+					}
 				}
 				else if (event.jaxis.axis == 1) // Y轴
 				{
@@ -71,6 +77,12 @@ void doInput(void)
 						// 执行向下操作
 						app.joystick[JOY_UP] = 0;
 						app.joystick[JOY_DOWN] = 1;
+					}
+					else
+					{
+						// 回中操作
+						app.joystick[JOY_UP] = 0;
+						app.joystick[JOY_DOWN] = 0;
 					}
 				}
 
